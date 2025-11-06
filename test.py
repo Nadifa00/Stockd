@@ -131,8 +131,9 @@ if sales_file and stock_file:
   print(f"MAE: {mae:.2f}")
   from sklearn.metrics import mean_squared_error
 
-  rmse = mean_squared_error(y_test, y_pred, squared=False)
+  rmse = np.sqrt(mean_squared_error(y_test, y_pred))
   print(f"RMSE: {rmse:.2f}")
+
   mape = np.mean(np.abs((y_test - y_pred) / y_test)) * 100
   print(f"MAPE: {mape:.2f}%")
 
