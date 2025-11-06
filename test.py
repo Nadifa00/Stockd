@@ -108,6 +108,7 @@ if sales_file and stock_file:
   # Download button
   csv = final_df.to_csv(index=False)
   st.download_button(
+      label="Download Report as CSV",
       data=csv,
       file_name='stockd_report.csv',
       mime='text/csv'
