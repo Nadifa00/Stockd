@@ -33,14 +33,14 @@ if sales_file and stock_file:
   stock_df['product_encoded'] = le.transform(stock_df['product_name'])
 
   # --- Aggregate daily sales per product ---
-  daily_sales = sales_df.groupby(['date', 'product_encoded', 'product_name'])['quantity_sold'].sum().reset_index()
+  daily_sales = sales_df.groupby(['date', 'product_encoded', 'product_name'])['sales'].sum().reset_index()
 
   # --- Create lag features for forecasting ---
   lag_features = [1, 7]  # lag 1 day and lag 7 days
   daily_sales = daily_sales.sort_values(['product_encoded', 'date'])
 
   for lag in lag_features:
-      daily_sales[f'lag_{lag}'] = daily_sales.groupby('product_encoded')['quantity_sold'].shift(lag)
+      daily_sales[f'lag_{lag}'] = daily_sales.groupby('product_encoded')['sales'].shift(lag)
   
   # Drop initial rows with NaN lags
   daily_sales = daily_sales.dropna().reset_index(drop=True)
@@ -48,7 +48,7 @@ if sales_file and stock_file:
   # --- Features & target ---
   feature_cols = ['product_encoded'] + [f'lag_{lag}' for lag in lag_features]
   X = daily_sales[feature_cols]
-  y = daily_sales['quantity_sold']
+  y = daily_sales['sales']
 
   # --- Train model (XGBoost) ---
   model = XGBRegressor(n_estimators=100, objective='reg:squarederror', random_state=42)
@@ -64,7 +64,7 @@ if sales_file and stock_file:
       
       lags = last_row[[f'lag_{lag}' for lag in lag_features]].values.tolist()
       forecast_qty = 0
-      avg_daily_sales = product_data['quantity_sold'].mean()
+      avg_daily_sales = product_data['sales'].mean()
       temp_lags = lags.copy()
 
       for day in range(forecast_days):
