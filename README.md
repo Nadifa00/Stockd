@@ -1,2 +1,2 @@
-### Link to Stockd ###
-[Try it now](https://stockdapp.streamlit.app/)
+###👉Link to Stockd ###
+[Stockd app](https://stockdapp.streamlit.app/)
