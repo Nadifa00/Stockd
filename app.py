@@ -80,25 +80,27 @@ if sales_file and stock_file:
 
       # --- Apply smart stock rule ---
       days_of_stock = remaining_stock / avg_daily_sales if avg_daily_sales > 0 else float('inf')
-      if days_of_stock < forecast_days:
-          needed = forecast_qty - remaining_stock
-          decision = f"BUY {needed} units"
-          reason = (f"Forecasted demand for the next {forecast_days} days is {forecast_qty:.1f} units, "
-                    f"but current stock is only {remaining_stock}. "
-                    f"Stock will run out in ~{days_of_stock:.1f} days. Purchase {needed:.1f} units to avoid stockout.")
-      else:
-          needed = 0
-          decision = "DON'T BUY"
-          reason = (f"Forecasted demand for the next {forecast_days} days is {forecast_qty:.1f} units, "
-                    f"and current stock is {remaining_stock}. "
-                    f"Stock is sufficient for ~{days_of_stock:.1f} days. No purchase required.")
+      forecast_qty = int(round(forecast_qty))
+      remaining_stock = int(round(remaining_stock))
+      avg_daily_sales = int(round(avg_daily_sales))
 
-      results.append({
-          'Product': product_name,
-          'Decision': decision,
-          'Qty_to_Buy': needed,
-          'Reason': reason
-      })
+      if days_of_stock < forecast_days:
+        needed = int(round(max(0, forecast_qty - remaining_stock)))
+        decision = f"✅ BUY {needed} units" if needed > 0 else "❌ DON'T BUY"
+        reason = (f"Predicted demand ({forecast_qty}) exceeds remaining stock ({remaining_stock}). "
+            f"Stock may run out in ~{days_of_stock:.0f} days.")
+      else:
+        needed = 0
+        decision = "❌ DON'T BUY"
+        reason = (f"Stock ({remaining_stock}) is sufficient for predicted demand ({forecast_qty}) "
+            f"for the next {forecast_days} days.")
+
+        results.append({
+            'Product': product_name,
+            'Decision': decision,
+            'Qty_to_Buy': needed,
+            'Reason': reason
+        })
 
   final_df = pd.DataFrame(results)
 
