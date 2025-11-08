@@ -11,7 +11,7 @@ st.set_page_config(page_title="Stockd", layout="wide")
 st.title("Stockd")
 
 st.markdown("""
-Upload your **Sales CSV** and **Stock CSV** to get stock recommendations for the next 7 days.
+Upload your **Sales file** and **Stock file** to get stock recommendations for the next 7 days.
 """)
 
 # --- File upload ---
